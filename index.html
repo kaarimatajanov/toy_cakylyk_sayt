@@ -1,539 +1,389 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ровшен и Ханум | Приглашение на свадьбу</title>
-    
-    <!-- Подключение красивых шрифтов от Google -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;700&family=Montserrat:wght@300;400&family=Great+Vibes&display=swap" rel="stylesheet">
-    
-    <!-- Подключение иконок -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ровшен и Ханум | Приглашение на свадьбу</title>
 
-    <style>
-        /* --- ОБЩИЕ СТИЛИ --- */
-        :root {
-            --primary-color: #A0522D; /* Теплый коричневый (Сиена) */
-            --secondary-color: #FFF8E1; /* Кремовый/Слоновая кость */
-            --accent-color: #D4AF37; /* Золотой */
-            --text-color: #4a4a4a; /* Темно-серый для текста */
-            --font-headings: 'Cormorant Garamond', serif;
-            --font-names: 'Great Vibes', cursive;
-            --font-body: 'Montserrat', sans-serif;
-        }
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,700;1,400&family=Great+Vibes&family=Lora:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <style>
+    :root{
+      --ivory:#F5F0E8;
+      --sage-dark:#3A4534;
+      --gold:#C9A977;
+      --countdown-bg:#485440;
+      --font-display:'Cormorant Garamond',serif;
+      --font-script:'Great Vibes',cursive;
+      --font-body:'Lora',serif;
+    }
 
-        html {
-            scroll-behavior: smooth;
-        }
+    *{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{font-family:var(--font-body);color:var(--sage-dark);background:var(--ivory);line-height:1.7}
+    body.no-scroll{overflow:hidden}
 
-        body {
-            font-family: var(--font-body);
-            color: var(--text-color);
-            background-color: var(--secondary-color);
-            line-height: 1.7;
-        }
+    /* ===== INTRO (Splash Image -> Click -> Video+Music -> Seamless to site) ===== */
+    #intro{
+      position:fixed; inset:0;
+      z-index:10000;
+      background:#000;
+      cursor:pointer;
+      opacity:1; visibility:visible;
+      transition:opacity .35s ease, visibility .35s ease;
+    }
+    #intro.hidden{opacity:0;visibility:hidden;pointer-events:none}
 
-        h1, h2, h3 {
-            font-family: var(--font-headings);
-            font-weight: 700;
-            color: var(--primary-color);
-        }
+    /* splash images (2 sizes) */
+    #intro-poster{
+      position:absolute; inset:0;
+      background:center/cover no-repeat;
+      background-image:url("images/splash-desktop.jpg?v=1");
+      opacity:1;
+      transition:opacity .35s ease;
+      will-change:opacity;
+    }
+    @media (max-width:768px){
+      #intro-poster{
+        background-image:url("images/splash-mobile.jpg?v=1");
+      }
+    }
+    #intro-poster.hidden{opacity:0;pointer-events:none}
 
-        section {
-            padding: 80px 20px;
-            text-align: center;
-            overflow: hidden; /* Для анимаций */
-        }
-        
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-        }
+    /* video always full-screen. Desktop: cover. Mobile: contain (no crop) */
+    #intro-video{
+      position:absolute; inset:0;
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      background:#000;
+      visibility:hidden;
+    }
+    #intro.video-playing #intro-video{visibility:visible}
 
-        /* --- АНИМАЦИЯ ПАДАЮЩИХ ЦВЕТОВ --- */
-        #flower-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 9999;
-            overflow: hidden;
-        }
+    @media (max-width:768px){
+      #intro-video{
+        object-fit: cover;          /* без черных полос */
+        object-position: 50% 50%;   /* центр */
+        transform: none;            /* важно: убрать увеличение */
 
-        .flower {
-            position: absolute;
-            top: -50px;
-            font-size: 20px;
-            color: var(--accent-color);
-            opacity: 0.7;
-            animation: fall linear;
-        }
+      }
+    }
 
-        @keyframes fall {
-            to {
-                transform: translateY(105vh) rotate(360deg);
-                opacity: 0;
-            }
-        }
-        
-        /* --- АНИМАЦИЯ ПОЯВЛЕНИЯ БЛОКОВ ПРИ ПРОКРУТКЕ --- */
-        .fade-in {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 1s ease-out, transform 1s ease-out;
-        }
-        .fade-in.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
+    /* ===== MAIN CONTENT ===== */
+    #main-content{visibility:hidden}
 
-        /* --- ГЛАВНЫЙ ЭКРАН (HERO) --- */
-        #hero {
-            position: relative;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            padding: 20px;
-            background: url('images/hero-background.jpg') no-repeat center center/cover;
-        }
+    .container{max-width:900px;margin:0 auto;padding:0 20px}
+    section{padding:6rem 1.5rem;text-align:center;overflow:hidden}
+    @media (min-width:768px){section{padding:8rem 3rem}}
 
-        #hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.45); /* Чуть темнее для контраста с золотом */
-        }
+    h1,h2,h3{font-family:var(--font-display);font-weight:400;color:var(--sage-dark)}
 
-        #hero .content {
-            position: relative;
-            z-index: 2;
-        }
-        
-        /* --- ИЗМЕНЕННЫЙ БЛОК 1 --- */
-        #hero h3 {
-            font-family: var(--font-body);
-            font-weight: 400;
-            letter-spacing: 2px;
-            font-size: 1.5rem;
-            color: var(--accent-color); /* Золотой цвет */
-            font-style: italic; /* Курсив */
-        }
+    /* falling flowers */
+    #flower-container{position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden}
+    .flower{position:absolute;top:-50px;font-size:20px;color:var(--gold);opacity:.7;animation:fall linear}
+    @keyframes fall{to{transform:translateY(105vh) rotate(360deg);opacity:0}}
 
-        /* --- ИЗМЕНЕННЫЙ БЛОК 2 --- */
-        #hero h1 {
-            font-family: var(--font-names);
-            color: var(--accent-color); /* Золотой цвет */
-            text-shadow: 2px 2px 10px rgba(0,0,0,0.7); /* Усиленная тень */
-        }
+    .fade-in{opacity:0;transform:translateY(30px);transition:opacity 1s ease-out,transform 1s ease-out}
+    .fade-in.visible{opacity:1;transform:translateY(0)}
 
-        /* --- ИЗМЕНЕННЫЙ БЛОК 3 --- */
-        #hero h2 {
-            font-size: 2rem;
-            color: var(--accent-color); /* Золотой цвет */
-            border-top: 1px solid var(--accent-color);
-            border-bottom: 1px solid var(--accent-color);
-            padding: 10px 0;
-            display: inline-block;
-            font-style: italic; /* Курсив */
-        }
+    /* hero */
+    #hero{
+      height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;
+      background:url("images/hero-background.jpg") center/cover no-repeat;
+      position:relative;color:#fff;padding:20px;text-align:center
+    }
+    #hero::before{content:"";position:absolute;inset:0;background:rgba(0,0,0,.45)}
+    #hero .content{position:relative;z-index:2}
+    #hero h3{font-family:var(--font-body);font-size:1.5rem;letter-spacing:2px;color:#fff;font-style:italic;opacity:.8}
+    #hero h1{font-family:var(--font-script);color:#fff;text-shadow:2px 2px 10px rgba(0,0,0,.7)}
+    #hero h2{font-size:2rem;color:#fff;border-top:1px solid var(--gold);border-bottom:1px solid var(--gold);padding:10px 0;display:inline-block;font-style:italic}
+    #hero h1.names-stacked{line-height:1.2;margin:20px 0}
+    #hero h1.names-stacked .name{display:block;font-size:6rem}
+    #hero h1.names-stacked .ampersand{display:block;font-size:4rem;font-family:var(--font-display);color:var(--gold);margin:5px 0}
 
-        /* --- СТИЛИ ДЛЯ ИМЕН НА ОТДЕЛЬНЫХ СТРОКАХ --- */
-        #hero h1.names-stacked {
-            line-height: 1.2;
-            margin: 20px 0;
-        }
+    /* countdown */
+    #countdown{background:var(--countdown-bg);color:#fff}
+    #countdown h2{font-family:var(--font-script);font-size:4rem;color:#fff;margin-bottom:40px}
+    .timer{display:flex;justify-content:center;gap:20px;flex-wrap:wrap}
+    .timer-item{
+      background:rgba(255,255,255,.1);backdrop-filter:blur(5px);
+      padding:20px;border-radius:8px;border:1px solid rgba(255,255,255,.2);
+      min-width:100px;box-shadow:0 4px 15px rgba(0,0,0,.1)
+    }
+    .timer-item span{display:block;font-size:3rem;font-family:var(--font-display);font-weight:300;color:#fff}
+    .timer-item p{font-size:.8rem;text-transform:uppercase;letter-spacing:2px;color:rgba(255,255,255,.7);font-family:var(--font-body)}
 
-        #hero h1.names-stacked .name {
-            display: block;
-            font-size: 6rem;
-        }
+    section h2{font-family:var(--font-script);font-size:4rem;margin-bottom:30px}
 
-        #hero h1.names-stacked .ampersand {
-            display: block;
-            font-size: 4rem;
-            font-family: var(--font-headings);
-            color: var(--accent-color);
-            margin: 5px 0;
-        }
+    #invitation p{font-size:1.2rem;max-width:700px;margin:0 auto 20px;color:var(--sage-dark);opacity:.8}
+    #invitation .names{font-family:var(--font-script);font-size:3rem;color:var(--sage-dark)}
 
-        /* --- СЧЕТЧИК ВРЕМЕНИ --- */
-        #countdown {
-            background-color: white;
-        }
-        
-        #countdown h2 {
-            margin-bottom: 40px;
-            font-size: 2.5rem;
-        }
+    #details{background:#fff}
+    .details-grid{display:flex;justify-content:center;gap:30px;margin-top:40px;flex-wrap:wrap}
+    .detail-item{max-width:250px}
+    .detail-item .icon{font-size:3rem;color:var(--gold);margin-bottom:15px}
+    .detail-item h3{font-size:1.8rem;margin-bottom:10px}
 
-        .timer {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
+    #venue p{font-size:1.2rem;margin-bottom:40px;color:var(--sage-dark);opacity:.8}
+    .photo-gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:15px;margin-bottom:40px}
+    .photo-gallery img{width:100%;height:250px;object-fit:cover;border-radius:8px;box-shadow:0 5px 20px rgba(0,0,0,.08);transition:transform .3s ease,box-shadow .3s ease}
+    .photo-gallery img:hover{transform:scale(1.03);box-shadow:0 8px 25px rgba(0,0,0,.15)}
 
-        .timer-item {
-            background: var(--secondary-color);
-            padding: 20px;
-            border-radius: 10px;
-            min-width: 100px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-        }
+    .map-container{width:100%;border-radius:8px;overflow:hidden;box-shadow:0 5px 20px rgba(0,0,0,.1)}
+    .map-container iframe{width:100%;height:450px;border:0}
 
-        .timer-item span {
-            display: block;
-            font-size: 3rem;
-            font-family: var(--font-headings);
-            color: var(--primary-color);
-        }
+    #rsvp{background:var(--sage-dark);color:#fff}
+    #rsvp h2{color:#fff}
+    #rsvp p{color:#fff;opacity:.8;margin:20px auto 40px;max-width:600px}
+    .btn{
+      display:inline-block;background:var(--gold);color:#fff;padding:15px 40px;text-decoration:none;
+      font-family:var(--font-body);font-weight:bold;font-size:1rem;border-radius:50px;
+      transition:background-color .3s ease,transform .3s ease;box-shadow:0 4px 15px rgba(0,0,0,.2)
+    }
+    .btn:hover{background:#d4b88a;transform:translateY(-3px)}
 
-        .timer-item p {
-            font-size: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+    footer{padding:40px 20px;font-family:var(--font-script);font-size:2.5rem;color:var(--sage-dark)}
 
-        /* --- ТЕКСТ ПРИГЛАШЕНИЯ --- */
-        #invitation p {
-            font-size: 1.2rem;
-            max-width: 700px;
-            margin: 0 auto 20px;
-        }
-        #invitation .names {
-            font-family: var(--font-names);
-            font-size: 3rem;
-            color: var(--primary-color);
-        }
-        
-        /* --- ДЕТАЛИ МЕРОПРИЯТИЯ --- */
-        #details {
-            background-color: white;
-        }
-
-        #details .details-grid {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin-top: 40px;
-            flex-wrap: wrap;
-        }
-        
-        .detail-item {
-            max-width: 250px;
-        }
-
-        .detail-item .icon {
-            font-size: 3rem;
-            color: var(--accent-color);
-            margin-bottom: 15px;
-        }
-        
-        .detail-item h3 {
-            font-size: 1.8rem;
-            margin-bottom: 10px;
-        }
-
-        /* --- МЕСТО ПРОВЕДЕНИЯ --- */
-        #venue h2 {
-             margin-bottom: 20px;
-             font-size: 2.5rem;
-        }
-        
-        #venue p {
-            font-size: 1.2rem;
-            margin-bottom: 40px;
-        }
-
-        .photo-gallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 15px;
-            margin-bottom: 40px;
-        }
-        
-        .photo-gallery img {
-            width: 100%;
-            height: 250px;
-            object-fit: cover;
-            border-radius: 10px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        
-        .photo-gallery img:hover {
-            transform: scale(1.05);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-        }
-
-        .map-container {
-            width: 100%;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-        }
-        
-        .map-container iframe {
-            width: 100%;
-            height: 450px;
-            border: 0;
-        }
-
-        /* --- RSVP (ПОДТВЕРЖДЕНИЕ) --- */
-        #rsvp {
-            background-color: var(--primary-color);
-            color: white;
-        }
-        
-        #rsvp h2 {
-            color: white;
-            font-size: 2.5rem;
-        }
-        
-        #rsvp p {
-             margin: 20px auto 40px;
-             max-width: 600px;
-        }
-        
-        .btn {
-            display: inline-block;
-            background-color: var(--accent-color);
-            color: white;
-            padding: 15px 40px;
-            text-decoration: none;
-            font-family: var(--font-body);
-            font-weight: bold;
-            font-size: 1rem;
-            border-radius: 50px;
-            transition: background-color 0.3s ease, transform 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-        
-        .btn:hover {
-            background-color: #e6c550;
-            transform: translateY(-3px);
-        }
-
-        /* --- FOOTER --- */
-        footer {
-            padding: 40px 20px;
-            font-family: var(--font-names);
-            font-size: 2rem;
-            color: var(--primary-color);
-        }
-
-        /* --- АДАПТИВНОСТЬ --- */
-        @media (max-width: 768px) {
-            #hero h2 {
-                font-size: 1.5rem;
-            }
-            #hero h3 {
-                font-size: 1.2rem;
-            }
-            #hero h1.names-stacked .name {
-                font-size: 4rem;
-            }
-            #hero h1.names-stacked .ampersand {
-                font-size: 3rem;
-            }
-            section {
-                padding: 60px 15px;
-            }
-            .timer {
-                gap: 15px;
-            }
-            .timer-item {
-                min-width: 80px;
-                padding: 15px 10px;
-            }
-            .timer-item span {
-                font-size: 2rem;
-            }
-        }
-
-    </style>
+    @media (max-width:768px){
+      #hero h1.names-stacked .name{font-size:4rem}
+      #hero h1.names-stacked .ampersand{font-size:3rem}
+      #hero h2,#hero h3{font-size:1.5rem}
+      section{padding:4rem 1rem}
+      section h2{font-size:3rem}
+      .timer{gap:10px}
+      .timer-item{min-width:80px;padding:15px 10px}
+      .timer-item span{font-size:2.5rem}
+    }
+  </style>
 </head>
-<body>
 
+<body class="no-scroll">
+
+  <!-- INTRO -->
+  <div id="intro" aria-label="Заставка. Нажмите чтобы начать.">
+    <div id="intro-poster"></div>
+
+    <video id="intro-video" playsinline muted preload="auto">
+      <!-- mobile-first selection -->
+      <source src="videos/video-mobile.mp4?v=1" type="video/mp4" media="(max-width: 768px)">
+      <source src="videos/video-desktop.mp4?v=1" type="video/mp4">
+    </video>
+  </div>
+
+  <!-- Music -->
+  <audio id="bg-music" loop preload="auto">
+    <source src="music/wedding-music.mp3?v=1" type="audio/mpeg">
+  </audio>
+
+  <!-- MAIN -->
+  <div id="main-content">
     <div id="flower-container"></div>
 
     <header id="hero">
-        <div class="content">
-            <h2>Мы женимся!</h2>
-            <h1 class="names-stacked">
-                <span class="name">Ровшен</span>
-                <span style="text-align: center;" class="ampersand">&amp;</span>
-                <span class="name">Ханум</span>
-            </h1>
-            <h2>4 апреля 2026</h2>
-        </div>
+      <div class="content">
+        <h3>Мы женимся!</h3>
+        <h1 class="names-stacked">
+          <span class="name">Ровшен</span>
+          <span class="ampersand">&amp;</span>
+          <span class="name">Ханум</span>
+        </h1>
+        <h2>4 апреля 2026</h2>
+      </div>
     </header>
 
     <main>
-        <section id="countdown">
-            <div class="container">
-                <div class="fade-in">
-                    <h2>До нашей свадьбы осталось</h2>
-                    <div class="timer">
-                        <div class="timer-item">
-                            <span id="days">00</span><p>Дней</p>
-                        </div>
-                        <div class="timer-item">
-                            <span id="hours">00</span><p>Часов</p>
-                        </div>
-                        <div class="timer-item">
-                            <span id="minutes">00</span><p>Минут</p>
-                        </div>
-                        <div class="timer-item">
-                            <span id="seconds">00</span><p>Секунд</p>
-                        </div>
-                    </div>
-                </div>
+      <section id="countdown">
+        <div class="container">
+          <div class="fade-in">
+            <h2>До нашей свадьбы осталось</h2>
+            <div class="timer">
+              <div class="timer-item"><span id="days">00</span><p>Дней</p></div>
+              <div class="timer-item"><span id="hours">00</span><p>Часов</p></div>
+              <div class="timer-item"><span id="minutes">00</span><p>Минут</p></div>
+              <div class="timer-item"><span id="seconds">00</span><p>Секунд</p></div>
             </div>
-        </section>
+          </div>
+        </div>
+      </section>
 
-        <section id="invitation">
-            <div class="container fade-in">
-                <h2>Дорогие родные и друзья!</h2>
-                <p>
-                    Один день в жизни может стать началом большого счастья. Мы верим, что этот день для нас настал! 
-                    Мы будем безмерно рады, если вы разделите с нами радость этого незабываемого события и станете свидетелями начала нашей семейной истории.
-                </p>
-                <p class="names">Ровшен и Ханум</p>
+      <section id="invitation">
+        <div class="container fade-in">
+          <h2>Дорогие родные и друзья!</h2>
+          <p>Один день в жизни может стать началом большого счастья. Мы верим, что этот день для нас настал! Мы будем безмерно рады, если вы разделите с нами радость этого незабываемого события и станете свидетелями начала нашей семейной истории.</p>
+          <p class="names">Ровшен и Ханум</p>
+        </div>
+      </section>
+
+      <section id="details">
+        <div class="container fade-in">
+          <h2>Программа дня</h2>
+          <div class="details-grid">
+            <div class="detail-item">
+              <div class="icon"><i class="fa-solid fa-calendar-check"></i></div>
+              <h3>День свадьбы</h3>
+              <p>Суббота, 4 апреля 2026 года</p>
             </div>
-        </section>
-
-        <section id="details">
-            <div class="container fade-in">
-                <h2>Программа дня</h2>
-                 <div class="details-grid">
-                    <div class="detail-item">
-                        <div class="icon"><i class="fa-solid fa-calendar-check"></i></div>
-                        <h3>День свадьбы</h3>
-                        <p>Суббота, 4 апреля 2026 года</p>
-                    </div>
-                    <div class="detail-item">
-                        <div class="icon"><i class="fa-solid fa-clock"></i></div>
-                        <h3>Сбор гостей и банкет</h3>
-                        <p>Начало в 18:00 и до 23:00</p>
-                    </div>
-                    <div class="detail-item">
-                        <div class="icon"><i class="fa-solid fa-map-marker-alt"></i></div>
-                        <h3>Место</h3>
-                        <p>Банкетный зал «Гулзаман»</p>
-                    </div>
-                 </div>
+            <div class="detail-item">
+              <div class="icon"><i class="fa-solid fa-clock"></i></div>
+              <h3>Сбор гостей и банкет</h3>
+              <p>Начало в 18:00 и до 23:00</p>
             </div>
-        </section>
-
-        <section id="venue">
-            <div class="container fade-in">
-                <h2>Место проведения</h2>
-                <p>Торжество состоится в прекрасном банкетном зале «Гулзаман» по адресу: город Ашхабад.</p>
-                
-                <div class="photo-gallery">
-                    <img src="images/restaurant-1.jpg" alt="Фотография ресторана 1">
-                    <img src="images/restaurant-2.jpg" alt="Фотография ресторана 2">
-                    <img src="images/restaurant-3.jpg" alt="Фотография ресторана 3">
-                </div>
-
-                <div class="map-container">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d100723.3323055938!2d58.29965561081708!3d37.95015112658102!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3f6ffd8338000001%3A0x448024c0d18399e1!2z0JDRiNhd0LHQsNCx0LQsINCi0YPRgNC60LzQtdC90LjRgdGC0LDQvQ!5e0!3m2!1sru!2s!4v1716164243685!5m2!1sru!2s" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-                </div>
+            <div class="detail-item">
+              <div class="icon"><i class="fa-solid fa-map-marker-alt"></i></div>
+              <h3>Место</h3>
+              <p>Банкетный зал «Гулзаман»</p>
             </div>
-        </section>
-        
-        <section id="rsvp">
-            <div class="container fade-in">
-                <h2>Подтвердите ваше присутствие</h2>
-                <p>Мы будем очень благодарны, если вы сообщите о своем присутствии до 20 марта 2026 года, чтобы мы могли все подготовить наилучшим образом.</p>
-                
-                <a href="#" class="btn">Подтвердить присутствие</a>
-            </div>
-        </section>
+          </div>
+        </div>
+      </section>
 
+      <section id="venue">
+        <div class="container fade-in">
+          <h2>Место проведения</h2>
+          <p>Торжество состоится в прекрасном банкетном зале «Гулзаман» по адресу: город Ашхабад.</p>
+
+          <div class="photo-gallery">
+            <img src="images/restaurant-1.jpg" alt="Фото 1">
+            <img src="images/restaurant-2.jpg" alt="Фото 2">
+          </div>
+
+          <div class="map-container">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d100723.3323055938!2d58.29965561081708!3d37.95015112658102!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3f6ffd8338000001%3A0x448024c0d18399e1!2z0JDRiNhd0LHQsNCx0LQsINCi0YPRgNC60LzQtdC90LjRgdGC0LDQvQ!5e0!3m2!1sru!2s!4v1716164243685!5m2!1sru!2s"
+              allowfullscreen
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"></iframe>
+          </div>
+        </div>
+      </section>
+
+      <section id="rsvp">
+        <div class="container fade-in">
+          <h2>Подтвердите ваше присутствие</h2>
+          <p>Мы будем очень благодарны, если вы сообщите о своем присутствии до 20 марта 2026 года, чтобы мы могли все подготовить наилучшим образом.</p>
+          <a href="#" class="btn">Подтвердить присутствие</a>
+        </div>
+      </section>
     </main>
 
     <footer class="fade-in">
+      <div class="container">
         <p>С нетерпением ждем вас!</p>
         <p>Ровшен и Ханум</p>
+      </div>
     </footer>
+  </div>
 
-    <script>
-        // ... (весь JavaScript код остается без изменений) ...
-        const countdown = () => {
-            const weddingDate = new Date('April 4, 2026 18:00:00').getTime();
-            const now = new Date().getTime();
-            const distance = weddingDate - now;
+  <script>
+    // ===== INTRO LOGIC =====
+    const intro = document.getElementById('intro');
+    const poster = document.getElementById('intro-poster');
+    const introVideo = document.getElementById('intro-video');
+    const bgMusic = document.getElementById('bg-music');
+    const main = document.getElementById('main-content');
 
-            if (distance < 0) {
-                document.getElementById('countdown').innerHTML = "<h2>Этот прекрасный день настал!</h2>";
-                return;
-            }
+    let started = false;
 
-            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+    function showSiteFast() {
+      // fast + smooth: hide intro, show main almost immediately
+      intro.classList.add('hidden');
+      document.body.classList.remove('no-scroll');
+      main.style.visibility = 'visible';
 
-            document.getElementById('days').innerText = days < 10 ? '0' + days : days;
-            document.getElementById('hours').innerText = hours < 10 ? '0' + hours : hours;
-            document.getElementById('minutes').innerText = minutes < 10 ? '0' + minutes : minutes;
-            document.getElementById('seconds').innerText = seconds < 10 ? '0' + seconds : seconds;
-        };
-        setInterval(countdown, 1000);
-        countdown();
+      setTimeout(() => {
+        document.querySelector('#countdown .fade-in')?.classList.add('visible');
+      }, 120);
+    }
 
-        const flowerContainer = document.getElementById('flower-container');
-        const flowerTypes = ['🌸', '🌼', '🌺', '💮', '🌷', '✨'];
+    async function startIntro() {
+      if (started) return;
+      started = true;
 
-        function createFlower() {
-            const flower = document.createElement('div');
-            flower.classList.add('flower');
-            flower.innerText = flowerTypes[Math.floor(Math.random() * flowerTypes.length)];
-            
-            flower.style.left = Math.random() * 100 + 'vw';
-            flower.style.animationDuration = (Math.random() * 5 + 5) + 's';
-            flower.style.fontSize = (Math.random() * 10 + 15) + 'px';
-            flower.style.animationDelay = (Math.random() * 2) + 's';
-            
-            flowerContainer.appendChild(flower);
+      // reveal video immediately under poster
+      intro.classList.add('video-playing');
+      poster.classList.add('hidden');
+      intro.style.cursor = 'default';
 
-            setTimeout(() => {
-                flower.remove();
-            }, 10000);
-        }
-        setInterval(createFlower, 250);
+      // start music and video together (must be on user gesture)
+      try {
+        bgMusic.volume = 0.5;
+        await Promise.allSettled([
+          bgMusic.play(),
+          introVideo.play()
+        ]);
+      } catch (e) {
+        // ignore; user gesture should allow. If not, video will still play muted.
+        console.log(e);
+      }
+    }
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, {
-            threshold: 0.1
-        });
+    intro.addEventListener('click', startIntro, { passive: true });
 
-        const fadeElements = document.querySelectorAll('.fade-in');
-        fadeElements.forEach(el => observer.observe(el));
-    </script>
+    // if video ends -> seamless transition
+    introVideo.addEventListener('ended', () => {
+      showSiteFast();
+    });
+
+    // safety: if video cannot play/loads error -> go to site quickly
+    introVideo.addEventListener('error', () => {
+      showSiteFast();
+    });
+
+    // ===== COUNTDOWN =====
+    function countdown() {
+      const weddingDate = new Date('April 4, 2026 18:00:00').getTime();
+      const now = Date.now();
+      const distance = weddingDate - now;
+
+      if (distance < 0) {
+        const c = document.getElementById('countdown');
+        if (c) c.innerHTML = "<div class='container'><h2>Этот прекрасный день настал!</h2></div>";
+        return;
+      }
+
+      const d = Math.floor(distance / 864e5);
+      const h = Math.floor((distance % 864e5) / 36e5);
+      const m = Math.floor((distance % 36e5) / 6e4);
+      const s = Math.floor((distance % 6e4) / 1000);
+
+      document.getElementById('days').innerText = String(d).padStart(2,'0');
+      document.getElementById('hours').innerText = String(h).padStart(2,'0');
+      document.getElementById('minutes').innerText = String(m).padStart(2,'0');
+      document.getElementById('seconds').innerText = String(s).padStart(2,'0');
+    }
+    setInterval(countdown, 1000);
+    countdown();
+
+    // ===== FLOWERS =====
+    const flowerContainer = document.getElementById('flower-container');
+    const flowerTypes = ['🌸', '🌼', '🌺', '💮', '🌷', '✨'];
+
+    function createFlower() {
+      if (!flowerContainer) return;
+      const flower = document.createElement('div');
+      flower.className = 'flower';
+      flower.innerText = flowerTypes[Math.floor(Math.random() * flowerTypes.length)];
+      flower.style.left = Math.random() * 100 + 'vw';
+      flower.style.animationDuration = (Math.random() * 5 + 5) + 's';
+      flower.style.fontSize = (Math.random() * 10 + 15) + 'px';
+      flower.style.animationDelay = (Math.random() * 2) + 's';
+      flowerContainer.appendChild(flower);
+      setTimeout(() => flower.remove(), 10000);
+    }
+    setInterval(createFlower, 250);
+
+    // ===== FADE-IN OBSERVER =====
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('visible');
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+  </script>
 </body>
 </html>
